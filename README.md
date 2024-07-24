@@ -1,6 +1,6 @@
-# SaqaCode
+# ThinkHive
 
-**SaqaCode** is a Q&A platform designed specifically for Georgian-speaking developers. It aims to foster a vibrant community where developers of all skill levels can ask questions, share knowledge, and collaborate on various tech topics. With a focus on localized content and community-driven support, SaqaCode provides a valuable resource tailored to the unique needs of the Georgian tech community.
+**ThinkHive** is a Q&A platform designed specifically for Georgian-speaking developers. It aims to foster a vibrant community where developers of all skill levels can ask questions, share knowledge, and collaborate on various tech topics. With a focus on localized content and community-driven support, ThinkHive provides a valuable resource tailored to the unique needs of the Georgian tech community.
 
 ## Features
 
@@ -34,7 +34,7 @@
 
 ## Unique Value Proposition
 
-SaqaCode provides localized content in the Georgian language, focusing on the specific tech challenges and solutions relevant to the Georgian community. It fosters collaboration and mentorship, making it a valuable resource for developers in Georgia.
+ThinkHive provides localized content in the Georgian language, focusing on the specific tech challenges and solutions relevant to the Georgian community. It fosters collaboration and mentorship, making it a valuable resource for developers in Georgia.
 
 ## Technology Stack
 
@@ -79,4 +79,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-SaqaCode - Fostering the Georgian Developer Community
+ThinkHive - Fostering the Georgian Developer Community
