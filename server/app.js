@@ -4,17 +4,31 @@ import mongoose from 'mongoose';
 import dotenv from "dotenv";
 import cors from 'cors';
 
+// Routers
+import userRouter from './routes/users.route.js';
+
+const app = express();
+
 dotenv.config();
 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://your-client-url.com'],
+    origin: ['http://localhost:5173', 'https://think-hive.vercel.app'],
     credentials: true
 }));
 
-const app = express();
+// Routes
+app.use('/api/users', userRouter);
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
-});
+
+mongoose.connect(process.env.MONGO_URL)
+    .then(() => {
+        console.log("Connected to MongoDB");
+        app.listen(process.env.PORT, () => {
+            console.log("Listening on port 5000");
+        });
+    })
+    .catch((err) => {
+        console.error("Error connecting to MongoDB:", err);
+    });

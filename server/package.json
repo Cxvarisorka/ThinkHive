@@ -1,22 +1,22 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "SaqaCode back-end logic",
+  "description": "ThinkHive back-end logic",
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cxvarisorka/SaqaCode.git"
+    "url": "git+https://github.com/Cxvarisorka/ThinkHive.git"
   },
   "author": "Luka Tskhvaradze",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Cxvarisorka/SaqaCode/issues"
+    "url": "https://github.com/Cxvarisorka/ThinkHive/issues"
   },
-  "homepage": "https://github.com/Cxvarisorka/SaqaCode#readme",
+  "homepage": "https://github.com/Cxvarisorka/ThinkHive#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
