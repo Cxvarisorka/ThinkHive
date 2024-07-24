@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "SaqaCode back-end logic",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cxvarisorka/SaqaCode.git"
+  },
+  "author": "Luka Tskhvaradze",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cxvarisorka/SaqaCode/issues"
+  },
+  "homepage": "https://github.com/Cxvarisorka/SaqaCode#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1"
+  }
+}
