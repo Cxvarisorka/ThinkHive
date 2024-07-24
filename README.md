@@ -52,7 +52,7 @@ ThinkHive provides localized content in the Georgian language, focusing on the s
 
 2. **Install dependencies**:
     ```bash
-    cd geooverflow
+    cd thinkhive
     npm install
     ```
 
