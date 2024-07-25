@@ -42,8 +42,10 @@ userRouter.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid password' });
         }
 
+        const returnInfo = await User.findOne({ email }, { passwordHash: 0 }) // Exclude hashed password from the response);
+
         // If login is successful, return 201 status with the user data
-        res.status(201).json(user);
+        res.status(201).json(returnInfo);
     } catch(err) {
         // If any error occurs during the process, return 500 status with the error message
         res.status(500).json({ message: err.message });
@@ -62,6 +64,18 @@ userRouter.get('/:id', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
         res.status(200).json(user);
+    }
+    catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+})
+
+// Get all users endpoint
+userRouter.get('/', async (req, res) => {
+    try {
+        // Find all users in the database
+        const users = await User.find({}, { passwordHash: 0 });  // Exclude hashed password from the response);
+        res.status(200).json(users);
     }
     catch(err) {
         res.status(500).json({ message: err.message });
@@ -93,6 +107,35 @@ userRouter.post('/:id', async (req, res) => {
     }
 });
 
+// User update password endpoint
+userRouter.post('/:id/password', async (req, res) => {
+    const { id } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        // Find the user by ID
+        const user = await User.findById(id);
+        if(!user) {
+            // If user not found, return 404 status with a message
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Compare the provided current password with the hashed password in the database
+        const validPassword = await bcrypt.compare(currentPassword, user.passwordHash);
+        if(!validPassword) {
+            // If password is invalid, return 400 status with a message
+            return res.status(400).json({ message: 'Invalid current password' });
+        }
+        // Hash the new password using bcrypt with 10 salt rounds
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+        // Update the user's passwordHash field
+        user.passwordHash = passwordHash;
+        await user.save();
+        res.status(200).json(user);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 // User delete profile endpoint
 userRouter.delete('/:id', async (req, res) => {
@@ -118,5 +161,9 @@ userRouter.delete('/:id', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 })
+
+userRouter.get('/', async (req, res) => {
+    res.status(200).send('API is running...');
+});
 
 export default userRouter;

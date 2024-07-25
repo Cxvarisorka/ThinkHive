@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema({
         trim: true,  // Remove leading and trailing whitespace
         lowercase: true  // Convert email to lowercase
     },
+    bio: {
+        type: String,
+        required: true,
+        trim: true,  // Remove leading and trailing whitespace,
+        lowercase: true  // Convert bio to lowercase
+    },
     passwordHash: {
         type: String,
         required: true
