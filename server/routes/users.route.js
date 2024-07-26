@@ -27,6 +27,8 @@ userRouter.post('/register', async (req, res) => {
 userRouter.post('/login', async (req, res) => {
     const { email, password} = req.body;
 
+    console.log(email, password)
+
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -135,7 +137,6 @@ userRouter.post('/:id/password', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
 
 // User delete profile endpoint
 userRouter.delete('/:id', async (req, res) => {

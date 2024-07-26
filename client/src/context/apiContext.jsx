@@ -5,14 +5,16 @@ const ApiContext = createContext();
 
 // Create a Provider component
 const ApiProvider = ({ children }) => {
-    const [data, setData] = useState(null);
+    const [account, setAccount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const register = async (url, data) => {
+    const apiUrl = 'http://localhost:5000/api';
+
+    const register = async (data) => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5000/api/${url}`, {
+            const response = await fetch(`${apiUrl}/users/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -20,7 +22,28 @@ const ApiProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            setData(await response.json());
+            console.log(await response.json())
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const login = async (data) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/users/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+            setAccount(json);
+            
         } catch (error) {
             setError(error.message);
         } finally {
@@ -29,8 +52,8 @@ const ApiProvider = ({ children }) => {
     }
 
     return (
-        <ApiContext.Provider value={{ data, loading, error }}>
-        {children}
+        <ApiContext.Provider value={{ account, loading, error, register, login }}>
+            {children}
         </ApiContext.Provider>
     );
 };
