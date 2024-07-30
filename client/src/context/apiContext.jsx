@@ -1,4 +1,5 @@
 import { createContext, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Create a Context
 const ApiContext = createContext();
@@ -8,6 +9,7 @@ const ApiProvider = ({ children }) => {
     const [account, setAccount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const apiUrl = 'http://localhost:5000/api';
 
@@ -44,6 +46,8 @@ const ApiProvider = ({ children }) => {
             const json = await response.json();
             setAccount(json);
             
+            return response.ok
+            
         } catch (error) {
             setError(error.message);
         } finally {
@@ -51,8 +55,13 @@ const ApiProvider = ({ children }) => {
         }
     }
 
+    const logout = () => {
+        setAccount(null);
+        navigate('/login');
+    }
+
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login }}>
+        <ApiContext.Provider value={{ account, loading, error, register, login, logout }}>
             {children}
         </ApiContext.Provider>
     );
