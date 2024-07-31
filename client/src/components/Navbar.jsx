@@ -26,7 +26,7 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        setIsNavFixed(scrollY >= 198);
+        setIsNavFixed(scrollY >= 600);
     }, [scrollY]);
 
 
@@ -55,9 +55,9 @@ const Navbar = () => {
                 </form>
 
                 <div className='flex md:w-auto w-full gap-2 mt-5 md:mt-0'>
-                    <Link to={`/${account ? 'profile' : 'login'}`} className='border-2 md:w-auto w-full py-2 px-4 rounded-md h-12 hover:bg-white hover:text-blue-900'>{`${account ? 'profile' : 'login'}`}</Link>
+                    <Link to={`/${account ? 'profile' : 'login'}`} className='border-2 md:w-auto w-full py-2 px-4 rounded-md h-12 hover:bg-white hover:text-blue-900'>{`${account ? 'Profile' : 'Log in'}`}</Link>
 
-                    {account ? <button onClick={logout} className='border-2 md:w-auto w-full py-2 px-4 rounded-md h-12 hover:bg-white hover:text-blue-900'>Logout</button> : <Link to={'/register'} className='border-2 md:w-auto w-full py-2 px-4 rounded-md h-12 hover:bg-white hover:text-blue-900'>Register</Link>}
+                    {account ? <button onClick={logout} className='border-2 md:w-auto w-full py-2 px-4 rounded-md h-12 hover:bg-white hover:text-blue-900'>Log out</button> : <Link to={'/register'} className='border-2 md:w-auto w-full py-2 px-4 rounded-md h-12 hover:bg-white hover:text-blue-900'>Sign up</Link>}
 
                 </div>
             </nav>

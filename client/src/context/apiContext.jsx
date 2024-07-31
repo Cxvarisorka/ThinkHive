@@ -60,8 +60,9 @@ const ApiProvider = ({ children }) => {
         navigate('/login');
     }
 
+
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login, logout }}>
+        <ApiContext.Provider value={{ account, loading, error, register, login, logout, }}>
             {children}
         </ApiContext.Provider>
     );

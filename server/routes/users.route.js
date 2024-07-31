@@ -6,14 +6,14 @@ const userRouter = express.Router();
 
 // User registration endpoint
 userRouter.post('/register', async (req, res) => {
-    const { username, email, password, bio } = req.body;
+    const { username, email, password } = req.body;
 
     try {
         // Hash the password using bcrypt with 10 salt rounds
         const passwordHash = await bcrypt.hash(password, 10);
 
         // Create a new user in the database using the User model
-        const user = await User.create({ username, email, passwordHash, bio, createdAt: new Date(), updatedAt: new Date() });
+        const user = await User.create({ username, email, passwordHash, createdAt: new Date(), updatedAt: new Date() });
 
         // Return a 201 status with the created user data
         res.status(201).json(user);

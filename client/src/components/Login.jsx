@@ -46,7 +46,7 @@ const Login = () => {
     };
 
     return (
-        <form onSubmit={(e) => handleSubmit(e)} className="inline-flex flex-col gap-8 w-96 p-8  bg-white rounded-md shadow-xl">
+        <form onSubmit={(e) => handleSubmit(e)} className="inline-flex flex-col gap-8 sm:w-96 w-60 p-8  bg-white rounded-md shadow-xl">
             <div className="flex flex-col gap-5">
                 {inputs.map((input) => {
                     return (
@@ -58,7 +58,7 @@ const Login = () => {
                 })}
             </div>
             
-            <input type="submit" className="w-full bg-blue-900 text-white p-3 rounded-md"/>
+            <button type="submit" className="w-full bg-blue-900 text-white p-3 rounded-md">Log in</button>
 
             <hr />
         </form>
