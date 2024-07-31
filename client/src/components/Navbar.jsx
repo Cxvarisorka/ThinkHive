@@ -33,7 +33,7 @@ const Navbar = () => {
 
 
     return (
-        <header className={`w-full bg-blue-900 text-white z-1000 ${isNavFixed ? 'fixed' : null}`}>
+        <header className={`w-full bg-blue-900 text-white z-1000`}>
             <nav className='flex flex-col md:flex-row gap-5 md:gap-10 justify-between items-center md:container md:mx-auto py-3 md:px-0 px-3'>
                 <div className='flex justify-between w-full md:w-auto'>
                     <Link to={'/'}><img src={logo} alt='ThinkHive Logo' className='w-32 md:w-40' /></Link>
