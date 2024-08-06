@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import { ApiContext } from "../context/apiContext.jsx"
 
-const Profile = () => {
+const MyProfile = () => {
     const { account, logout, askQuestion } = useContext(ApiContext);
 
     const handleSubmit = async (e) => {
@@ -33,6 +33,17 @@ const Profile = () => {
                     <textarea className="border" name="description" placeholder="Description"></textarea>
                     <button>Add Question</button>
                 </form>
+
+                <div>
+                    <h2>Your Questions:</h2>
+                    {/* Render questions here */}
+                    {account?.questions?.map((question, i) => (
+                        <div key={question._id}>
+                            <h3>{i + 1}.{question.question}</h3>
+                            <p>{question.description}</p>
+                        </div>
+                    ))}
+                </div>
                 
                 
                 <button onClick={logout}>Logout</button>
@@ -41,4 +52,4 @@ const Profile = () => {
     )
 }
 
-export default Profile;
+export default MyProfile;
