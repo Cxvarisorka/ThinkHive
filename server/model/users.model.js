@@ -16,9 +16,9 @@ const userSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
-        required: true,
+        required: false,
         trim: true,  // Remove leading and trailing whitespace,
-        lowercase: false  // Convert bio to lowercase
+        lowercase: true  // Convert bio to lowercase
     },
     passwordHash: {
         type: String,
@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now  // Automatically set the date and time when the user is updated
-    }
+    },
+    questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }]
 })
 
 

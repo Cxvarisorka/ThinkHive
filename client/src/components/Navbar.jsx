@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Link } from 'react-router-dom';
 import logo from '../assets/1-removebg-preview - Copy.png'
 import { useContext, useEffect, useState } from 'react';

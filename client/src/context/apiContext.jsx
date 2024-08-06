@@ -1,4 +1,5 @@
-import { createContext, useState, useContext } from 'react';
+/* eslint-disable react/prop-types */
+import { createContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Create a Context
@@ -24,6 +25,7 @@ const ApiProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            navigate("/login")
             console.log(await response.json())
         } catch (error) {
             setError(error.message);
@@ -55,6 +57,25 @@ const ApiProvider = ({ children }) => {
         }
     }
 
+    const askQuestion = async (data) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/questions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log(await response.json())
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const logout = () => {
         setAccount(null);
         navigate('/login');
@@ -62,7 +83,7 @@ const ApiProvider = ({ children }) => {
 
 
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login, logout, }}>
+        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion }}>
             {children}
         </ApiContext.Provider>
     );
