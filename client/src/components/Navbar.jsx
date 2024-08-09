@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Link } from 'react-router-dom';
 import logo from '../assets/1-removebg-preview - Copy.png'
 import { useContext, useEffect, useState } from 'react';
@@ -48,6 +49,7 @@ const Navbar = () => {
                     <li><Link to={'/about'} className='hover:text-gray-300'>About</Link></li>
                     <li><Link to={'/services'} className='hover:text-gray-300'>Services</Link></li>
                     <li><Link to={'/contact'} className='hover:text-gray-300'>Contact</Link></li>
+                    <li><Link to={'/questions'} className='hover:text-gray-300'>Questions</Link></li>
                 </ul>
 
                 <form className='w-full md:w-auto flex gap-5 mt-5 md:mt-0'>

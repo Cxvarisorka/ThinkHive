@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../model/users.model.js';
 import bcrypt from 'bcrypt';
+import Question from '../model/questions.model.js';
 
 const userRouter = express.Router();
 
@@ -161,7 +162,18 @@ userRouter.delete('/:id', async (req, res) => {
     } catch(err) {
         res.status(500).json({ message: err.message });
     }
-})
+});
+
+// Get user's questions endpoint
+userRouter.get('/:id/questions', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const questions = await Question.find({ user: id });
+        res.status(200).json(questions);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 userRouter.get('/', async (req, res) => {
     res.status(200).send('API is running...');

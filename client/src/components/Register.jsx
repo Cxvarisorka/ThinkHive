@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faGithub } from '@fortawesome/free-brands-svg-icons';
 
 const Register = () => {
+    // eslint-disable-next-line no-unused-vars
     const {loading, error, register} = useContext(ApiContext);
 
     const handleSubmit = async (e) => {
