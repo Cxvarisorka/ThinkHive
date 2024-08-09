@@ -85,7 +85,7 @@ userRouter.get('/', async (req, res) => {
 })
 
 // User update profile endpoint
-userRouter.post('/:id', async (req, res) => {
+userRouter.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { username, email, bio } = req.body;
 
@@ -110,7 +110,7 @@ userRouter.post('/:id', async (req, res) => {
 });
 
 // User update password endpoint
-userRouter.post('/:id/password', async (req, res) => {
+userRouter.put('/:id/password', async (req, res) => {
     const { id } = req.params;
     const { currentPassword, newPassword } = req.body;
 
