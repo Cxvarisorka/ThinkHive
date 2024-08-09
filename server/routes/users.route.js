@@ -2,6 +2,7 @@ import express from 'express';
 import User from '../model/users.model.js';
 import bcrypt from 'bcrypt';
 import Question from '../model/questions.model.js';
+import Answer from '../model/answers.model.js';
 
 const userRouter = express.Router();
 
@@ -170,6 +171,17 @@ userRouter.get('/:id/questions', async (req, res) => {
     try {
         const questions = await Question.find({ user: id });
         res.status(200).json(questions);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get user's answers endpoint
+userRouter.get('/:id/answers', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const answers = await Answer.find({ user: id });
+        res.status(200).json(answers);
     } catch(err) {
         res.status(500).json({ message: err.message });
     }

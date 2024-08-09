@@ -55,6 +55,7 @@ const ApiProvider = ({ children }) => {
         fetchData();
     }, []);
 
+
     const register = async (data) => {
         try {
             setLoading(true);
@@ -130,7 +131,40 @@ const ApiProvider = ({ children }) => {
             }
 
             const newQuestion = await response.json();
-            setAccount(prev => ({ ...prev, questions: [...prev.questions, newQuestion] }));
+            setQuestions(prev => ([...prev, newQuestion]));
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const deleteQuestion = async (questionId) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/questions/${questionId}`, {
+                method: 'DELETE',
+            });
+
+            await getUserQuestions(account._id);
+            setQuestions(prev => prev.filter(question => question._id !== questionId));
+        } catch(error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const updateQuestion = async (questionId, data) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/questions/${questionId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            const updatedQuestion = await response.json();
+            setQuestions(prev => prev.map(question => question._id === questionId? updatedQuestion : question));
         } catch (error) {
             setError(error.message);
         } finally {
@@ -181,7 +215,7 @@ const ApiProvider = ({ children }) => {
     }
 
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users, addAnswer, answers, setAnswers }}>
+        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users, addAnswer, answers, setAnswers, deleteQuestion, updateQuestion }}>
             {children}
         </ApiContext.Provider>
     );
