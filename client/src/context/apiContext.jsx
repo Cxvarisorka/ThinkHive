@@ -193,6 +193,42 @@ const ApiProvider = ({ children }) => {
         }
     }
 
+    const getSpecificQuestion = async (questionId) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/questions/${questionId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const updatePerson = async (data) => {
+        console.log("updatePerson", data);
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/users/${account._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+            setAccount(json);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     // const getUser = async (userId) => {
     //     try {
     //         setLoading(true);
@@ -215,7 +251,7 @@ const ApiProvider = ({ children }) => {
     }
 
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users, addAnswer, answers, setAnswers, deleteQuestion, updateQuestion }}>
+        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users, addAnswer, answers, setAnswers, deleteQuestion, updateQuestion, getSpecificQuestion, updatePerson }}>
             {children}
         </ApiContext.Provider>
     );

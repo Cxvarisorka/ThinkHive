@@ -1,15 +1,19 @@
 import express from 'express';
+
 import Answer from '../model/answers.model.js';
+import Question from '../model/questions.model.js';
 
 const answersRouter = express.Router();
 
 // Answer add endpoint
 answersRouter.post('/', async (req, res) => {
-    const { answer, question, user } = req.body;
+    const { answer, question, userid } = req.body;
     try {
         // Add answer to the question
-        const answerDoc = new Answer({ answer, question, user });
+        const answerDoc = new Answer({ answer, question, user:userid });
+        const questionDoc = await Question.findByIdAndUpdate(question, { $inc: { answersCount: 1 } });
         await answerDoc.save();
+        await questionDoc.save();
         res.status(201).json(answerDoc);
     } catch(err) {
         res.status(400).json({ message: err.message });

@@ -19,6 +19,14 @@ const questionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now  // Automatically set the date and time when the user is updated
     },
+    views: {
+        type: Number,
+        default: 0,  // Initialize views to 0
+    },
+    answersCount: {
+        type: Number,
+        default: 0
+    },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 })
 

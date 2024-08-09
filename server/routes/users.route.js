@@ -91,6 +91,8 @@ userRouter.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { username, email, bio } = req.body;
 
+    console.log(username, email, bio)
+
     // Create an object with only the fields that are provided in the request body
     const updateFields = {};
     if (username) updateFields.username = username;
