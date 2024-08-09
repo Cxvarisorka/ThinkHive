@@ -9,6 +9,8 @@ const ApiContext = createContext();
 const ApiProvider = ({ children }) => {
     const [account, setAccount] = useState(null);
     const [questions, setQuestions] = useState([]);
+    const [answers, setAnswers] = useState([]);
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -36,6 +38,14 @@ const ApiProvider = ({ children }) => {
                 }
                 const usersData = await usersResponse.json();
                 setUsers(usersData);
+
+                // Fetch all answers
+                const answersResponse = await fetch(`${apiUrl}/answers`);
+                if (!answersResponse.ok) {
+                    throw new Error(`HTTP error! status: ${answersResponse.status}`);
+                }
+                const answersData = await answersResponse.json();
+                setAnswers(answersData);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -128,6 +138,27 @@ const ApiProvider = ({ children }) => {
         }
     }
 
+    const addAnswer = async (data) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/answers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            const newAnswer = await response.json();
+            setAnswers(prev => ([...prev, newAnswer]));
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            setError(error.message);
+        } finally { 
+            setLoading(false);
+        }
+    }
+
     // const getUser = async (userId) => {
     //     try {
     //         setLoading(true);
@@ -150,7 +181,7 @@ const ApiProvider = ({ children }) => {
     }
 
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users }}>
+        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users, addAnswer, answers, setAnswers }}>
             {children}
         </ApiContext.Provider>
     );
