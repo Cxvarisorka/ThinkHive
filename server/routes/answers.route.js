@@ -30,4 +30,16 @@ answersRouter.get('/', async (req, res) => {
     }
 });
 
+// Get all specific question's answers endpoint
+answersRouter.get('/question/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const answers = await Answer.find({ question: id }, {question: 0}).populate("user");
+        console.log(answers);
+        res.status(200).json(answers);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 export default answersRouter;

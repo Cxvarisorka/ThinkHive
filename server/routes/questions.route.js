@@ -1,5 +1,6 @@
 import express from "express";
 import Question from "../model/questions.model.js";
+import ViewLog from "../model/viewlog.model.js";
 
 const questionRouter = express.Router();
 
@@ -53,18 +54,29 @@ questionRouter.get('/', async (req, res) => {
 // Get specific question endpoint
 questionRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
-    console.log("Working on question ID: " + id);
+    const { accountId } = req.query; // Assume accountId is passed in the query
+
     try {
-        const question = await Question.findByIdAndUpdate(
-            id,
-            { $inc: { views: 1 } },  // Increment the views by 1
-            { new: true } // Return the updated document
-        );
-        if(!question) return res.status(404).json({ message: 'Question not found' });
+        const question = await Question.findById(id);
+        if (!question) return res.status(404).json({ message: 'Question not found' });
+
+        if (accountId) {
+            // Logic to check if the user has already viewed this question
+            const hasViewed = await ViewLog.findOne({ questionId: id, userId: accountId });
+            if (!hasViewed) {
+                await Question.findByIdAndUpdate(id, { $inc: { views: 1 } });
+                await ViewLog.create({ questionId: id, userId: accountId });
+            }
+        } else {
+            // Logic to handle guest users (e.g., increment views only once per session)
+            await Question.findByIdAndUpdate(id, { $inc: { views: 1 } });
+        }
+
         res.status(200).json(question);
-    } catch(err) {
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
-})
+});
+
 
 export default questionRouter;

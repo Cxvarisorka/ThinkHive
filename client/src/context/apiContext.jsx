@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Create a Context
@@ -9,8 +9,6 @@ const ApiContext = createContext();
 const ApiProvider = ({ children }) => {
     const [account, setAccount] = useState(null);
     const [questions, setQuestions] = useState([]);
-    const [answers, setAnswers] = useState([]);
-
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -22,39 +20,31 @@ const ApiProvider = ({ children }) => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                
-                // Fetch all questions
-                const questionsResponse = await fetch(`${apiUrl}/questions`);
-                if (!questionsResponse.ok) {
-                    throw new Error(`HTTP error! status: ${questionsResponse.status}`);
+
+                const [questionsResponse, usersResponse] = await Promise.all([
+                    fetch(`${apiUrl}/questions`),
+                    fetch(`${apiUrl}/users`)
+                ]);
+
+                if (!questionsResponse.ok || !usersResponse.ok) {
+                    throw new Error(`HTTP error!`);
                 }
-                const questionsData = await questionsResponse.json();
+
+                const [questionsData, usersData] = await Promise.all([
+                    questionsResponse.json(),
+                    usersResponse.json()
+                ]);
+
                 setQuestions(questionsData);
-
-                // Fetch all users
-                const usersResponse = await fetch(`${apiUrl}/users`);
-                if (!usersResponse.ok) {
-                    throw new Error(`HTTP error! status: ${usersResponse.status}`);
-                }
-                const usersData = await usersResponse.json();
                 setUsers(usersData);
-
-                // Fetch all answers
-                const answersResponse = await fetch(`${apiUrl}/answers`);
-                if (!answersResponse.ok) {
-                    throw new Error(`HTTP error! status: ${answersResponse.status}`);
-                }
-                const answersData = await answersResponse.json();
-                setAnswers(answersData);
             } catch (error) {
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
-        }
+        };
         fetchData();
     }, []);
-
 
     const register = async (data) => {
         try {
@@ -74,7 +64,7 @@ const ApiProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const getUserQuestions = async (userId) => {
         try {
@@ -83,14 +73,13 @@ const ApiProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            console.log(response);
             return await response.json();
         } catch (error) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const login = async (data) => {
         try {
@@ -106,7 +95,6 @@ const ApiProvider = ({ children }) => {
             const json = await response.json();
             setAccount(json);
 
-            // Fetch user questions after setting the account
             const questions = await getUserQuestions(json._id);
             setAccount(prev => ({ ...prev, questions }));
 
@@ -116,7 +104,7 @@ const ApiProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const askQuestion = async (data) => {
         try {
@@ -129,7 +117,6 @@ const ApiProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
             const newQuestion = await response.json();
             setQuestions(prev => ([...prev, newQuestion]));
         } catch (error) {
@@ -137,23 +124,22 @@ const ApiProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const deleteQuestion = async (questionId) => {
         try {
             setLoading(true);
-            const response = await fetch(`${apiUrl}/questions/${questionId}`, {
+            await fetch(`${apiUrl}/questions/${questionId}`, {
                 method: 'DELETE',
             });
 
-            await getUserQuestions(account._id);
             setQuestions(prev => prev.filter(question => question._id !== questionId));
-        } catch(error) {
+        } catch (error) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const updateQuestion = async (questionId, data) => {
         try {
@@ -164,39 +150,25 @@ const ApiProvider = ({ children }) => {
                 body: JSON.stringify(data),
             });
             const updatedQuestion = await response.json();
-            setQuestions(prev => prev.map(question => question._id === questionId? updatedQuestion : question));
+            setQuestions(prev => prev.map(question => question._id === questionId ? updatedQuestion : question));
         } catch (error) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    const addAnswer = async (data) => {
-        try {
-            setLoading(true);
-            const response = await fetch(`${apiUrl}/answers`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
+    const getQuestion = async (questionId) => {
+        let url = `${apiUrl}/questions/${questionId}?accountId=${account?._id}`;
 
-            const newAnswer = await response.json();
-            setAnswers(prev => ([...prev, newAnswer]));
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-        } catch (error) {
-            setError(error.message);
-        } finally { 
-            setLoading(false);
+        if (!account) {
+            url = `${apiUrl}/questions/${questionId}`;
         }
-    }
 
-    const getSpecificQuestion = async (questionId) => {
         try {
             setLoading(true);
-            const response = await fetch(`${apiUrl}/questions/${questionId}`);
+            const response = await fetch(url);
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -206,7 +178,42 @@ const ApiProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }
+    };
+
+    const addAnswer = async (question, data) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/answers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({answer: data, question, user: account._id }),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const newAnswer = await response.json();
+            return newAnswer;
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getAnswers = async (questionId) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/answers/question/${questionId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const updatePerson = async (data) => {
         console.log("updatePerson", data);
@@ -227,31 +234,39 @@ const ApiProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }
-
-    // const getUser = async (userId) => {
-    //     try {
-    //         setLoading(true);
-    //         const response = await fetch(`${apiUrl}/users/${userId}`);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //         const data = await response.json();
-    //         return data;
-    //     } catch (error) {
-    //         setError(error.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }
+    };
 
     const logout = () => {
         setAccount(null);
         navigate('/login');
-    }
+    };
+
+    // Memoize the context value to prevent unnecessary re-renders
+    const contextValue = useMemo(() => ({
+        account,
+        loading,
+        error,
+        register,
+        login,
+        logout,
+        askQuestion,
+        questions,
+        users,
+        deleteQuestion,
+        updateQuestion,
+        updatePerson,
+        getQuestion,
+        getAnswers,
+        addAnswer
+    }), [account, loading, error, questions, users]);
 
     return (
-        <ApiContext.Provider value={{ account, loading, error, register, login, logout, askQuestion, questions, users, addAnswer, answers, setAnswers, deleteQuestion, updateQuestion, getSpecificQuestion, updatePerson }}>
+        <ApiContext.Provider value={contextValue}>
+            {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+                    <div className="text-white text-2xl">Loading...</div>
+                </div>
+            )}
             {children}
         </ApiContext.Provider>
     );
