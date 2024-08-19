@@ -182,12 +182,14 @@ const ApiProvider = ({ children }) => {
 
     const addAnswer = async (question, data) => {
         try {
+            
             setLoading(true);
             const response = await fetch(`${apiUrl}/answers`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({answer: data, question, user: account._id }),
             });
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

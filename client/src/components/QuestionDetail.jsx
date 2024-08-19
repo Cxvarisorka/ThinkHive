@@ -5,7 +5,7 @@ import { useContext, useEffect, useState, useCallback } from "react";
 const QuestionDetail = () => {
     const [info, setInfo] = useState({});
 
-    const { users, getQuestion, getAnswers, addAnswer } = useContext(ApiContext);
+    const { users, getQuestion, getAnswers, addAnswer, account } = useContext(ApiContext);
     const { id } = useParams();
 
     useEffect(() => {
@@ -25,14 +25,14 @@ const QuestionDetail = () => {
         fetchInfo();
     }, [id]);
     
-    const handleSubmit = useCallback(async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await addAnswer(info?.question, e.target.answer.value);
+            await addAnswer(info?.question._id, e.target.answer.value);
         } catch (error) {
             console.error("Error submitting answer:", error);
         }
-    }, [getQuestion, getAnswers]);
+    };
 
 
     const getUsername = useCallback((userId) => {
@@ -76,18 +76,25 @@ const QuestionDetail = () => {
 
             <section className="mt-8 max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-4">Your Answer</h3>
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <textarea
-                        className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-                        rows="5"
-                        placeholder="Write your answer..."
-                        name="answer"
-                    >
-                    </textarea>
-                    <button className="mt-4 px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-blue-700">
-                        Post Your Answer
-                    </button>  
-                </form>
+
+                {account ? (
+                    <form onSubmit={(e) => handleSubmit(e)}>
+                        <textarea
+                            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                            rows="5"
+                            placeholder="Write your answer..."
+                            name="answer"
+                        >
+                        </textarea>
+                        <button className="mt-4 px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-blue-700">
+                            Post Your Answer
+                        </button>  
+                    </form>
+                ) : (
+                    <Link to="/login" className="text-blue-600 hover:underline">Please log in</Link>
+                )}
+
+                
                 
             </section>
 

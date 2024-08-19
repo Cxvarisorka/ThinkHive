@@ -24,7 +24,7 @@ app.use(cors({
 // Routes
 app.use('/api/users', userRouter);
 app.use('/api/questions', questionRouter);
-app.use('/api/answers', answersRouter)
+app.use('/api/answers', answersRouter);
 
 
 mongoose.connect(process.env.MONGO_URL)
