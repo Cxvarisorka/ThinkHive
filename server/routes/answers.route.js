@@ -43,4 +43,30 @@ answersRouter.get('/question/:id', async (req, res) => {
     }
 });
 
+// update answers endpoint
+answersRouter.put('/question/:id', async (req, res) => {
+    const { id } = req.params;
+    const { answer } = req.body;
+    try {
+        const answerDoc = await Answer.findByIdAndUpdate(id, { answer }, { new: true });
+        if(!answerDoc) return res.status(404).json({ message: 'Answer not found' });
+        res.status(200).json(answerDoc);
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+})
+
+// Delete answer endpoint
+answersRouter.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const answer = await Answer.findByIdAndDelete(id);
+        if(!answer) return res.status(404).json({ message: 'Answer not found' });
+        res.status(204).json("Answer deleted successfully");
+    } catch(err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+
 export default answersRouter;
