@@ -161,9 +161,12 @@ const ApiProvider = ({ children }) => {
     const getQuestion = async (questionId) => {
         let url = `${apiUrl}/questions/${questionId}?accountId=${account?._id}`;
 
+
         if (!account) {
             url = `${apiUrl}/questions/${questionId}`;
         }
+
+ 
 
         try {
             setLoading(true);
@@ -182,12 +185,14 @@ const ApiProvider = ({ children }) => {
 
     const addAnswer = async (question, data) => {
         try {
+            
             setLoading(true);
             const response = await fetch(`${apiUrl}/answers`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({answer: data, question: question._id, user: account._id }),
             });
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -215,6 +220,37 @@ const ApiProvider = ({ children }) => {
         }
     };
 
+    const deleteAnswer = async (answerId) => {
+        try {
+            setLoading(true);
+            await fetch(`${apiUrl}/answers/${answerId}`, {
+                method: 'DELETE',
+            });
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateAnswer = async (answerId, data) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/question/${answerId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }        
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const updatePerson = async (data) => {
         console.log("updatePerson", data);
         try {
@@ -235,6 +271,7 @@ const ApiProvider = ({ children }) => {
             setLoading(false);
         }
     };
+
 
     const logout = () => {
         setAccount(null);
@@ -257,16 +294,27 @@ const ApiProvider = ({ children }) => {
         updatePerson,
         getQuestion,
         getAnswers,
-        addAnswer
+        addAnswer,
+        deleteAnswer,
+        updateAnswer
     }), [account, loading, error, questions, users]);
 
     return (
         <ApiContext.Provider value={contextValue}>
-            {loading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-                    <div className="text-white text-2xl">Loading...</div>
-                </div>
-            )}
+            {loading &&  (
+                    <div className="absolute inset-0 flex items-center h-screen justify-center bg-black bg-opacity-50 z-10">
+                        <div className="text-white text-2xl">Loading...</div>
+                    </div>
+                )
+            }
+            {
+                error && (
+                    <div className="text-red-500 text-center py-5">
+                        {error}
+                    </div>
+                )
+            }
+            
             {children}
         </ApiContext.Provider>
     );

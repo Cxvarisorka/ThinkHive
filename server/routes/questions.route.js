@@ -56,6 +56,7 @@ questionRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
     const { accountId } = req.query; // Assume accountId is passed in the query
 
+    console.log(accountId, "accountId");
     try {
         const question = await Question.findById(id);
         if (!question) return res.status(404).json({ message: 'Question not found' });
@@ -67,7 +68,7 @@ questionRouter.get('/:id', async (req, res) => {
                 await Question.findByIdAndUpdate(id, { $inc: { views: 1 } });
                 await ViewLog.create({ questionId: id, userId: accountId });
             }
-        } 
+        }
 
         res.status(200).json(question);
     } catch (err) {
