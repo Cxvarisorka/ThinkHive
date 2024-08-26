@@ -4,41 +4,38 @@ import { useContext, useEffect, useState, useCallback } from "react";
 
 const QuestionDetail = () => {
     const [info, setInfo] = useState({});
-
+    const [loading, setLoading] = useState(true); // Added loading state
     const { users, getQuestion, getAnswers, addAnswer } = useContext(ApiContext);
     const { id } = useParams();
 
     useEffect(() => {
         const fetchInfo = async () => {
             const foundQuestion = await getQuestion(id);
-            if (!(foundQuestion && JSON.stringify(foundQuestion) !== JSON.stringify(info?.question))) {
-                return;
-            }
             const fetchedAnswers = await getAnswers(id);
-            if (!(JSON.stringify(fetchedAnswers) !== JSON.stringify(info?.answers))) {
-                return;
-            }
-    
             setInfo({ question: foundQuestion, answers: fetchedAnswers });
+            setLoading(false); // Set loading to false when data is fetched
         };
     
         fetchInfo();
     }, [id]);
-    
+
     const handleSubmit = useCallback(async (e) => {
+        console.log(info)
         e.preventDefault();
         try {
             await addAnswer(info?.question, e.target.answer.value);
         } catch (error) {
             console.error("Error submitting answer:", error);
         }
-    }, [getQuestion, getAnswers]);
-
+    }, [info, addAnswer]);
 
     const getUsername = useCallback((userId) => {
+        if (!users.length) return 'Loading...'; // Check if users array is empty
         const user = users.find(user => user._id === userId);
         return user ? user.username : 'Unknown';
     }, [users]);
+
+    if (loading) return <div>Loading...</div>; // Display loading screen while data is fetching
 
     return (
         <main className="md:container md:mx-auto md:px-4 py-16">
@@ -51,44 +48,28 @@ const QuestionDetail = () => {
                     </p>
                     <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
                         <span>Views: {info?.question?.views}</span>
-                        <span>Answers: {info?.question?.answersCount}</span>
+                        <span>Answers: {info?.answers?.length}</span>
                     </div>
                     <div className="text-xs text-gray-400 mt-2">
                         <p>Created at: {new Date(info?.question?.createdAt).toLocaleString()}</p>
                         <p>Last updated: {new Date(info?.question?.updatedAt).toLocaleString()}</p>
                     </div>
                 </div>
-                <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-2">Related Questions</h3>
-                    <ul className="list-disc list-inside">
-                        <li>
-                            <Link to="#" className="text-blue-600 hover:underline">How to get HTML source of WebElement in Selenium WebDriver using Python?</Link>
-                        </li>
-                        <li>
-                            <Link to="#" className="text-blue-600 hover:underline">Is there a way to get element by XPath using JavaScript in Selenium WebDriver?</Link>
-                        </li>
-                        <li>
-                            <Link to="#" className="text-blue-600 hover:underline">How can I scroll a web page using selenium webdriver in python?</Link>
-                        </li>
-                    </ul>
-                </div>
             </section>
 
             <section className="mt-8 max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-4">Your Answer</h3>
-                <form onSubmit={(e) => handleSubmit(e)}>
+                <form onSubmit={handleSubmit}>
                     <textarea
                         className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                         rows="5"
                         placeholder="Write your answer..."
                         name="answer"
-                    >
-                    </textarea>
+                    ></textarea>
                     <button className="mt-4 px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-blue-700">
                         Post Your Answer
                     </button>  
                 </form>
-                
             </section>
 
             <section className="mt-8 max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
@@ -98,7 +79,7 @@ const QuestionDetail = () => {
                         <div key={answer._id} className="border-b py-4 flex flex-col gap-2">
                             <p>{answer.answer}</p>
                             <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                <span>Answered by <span className="text-blue-600">{getUsername(answer.user)}</span></span>
+                                <span>Answered by <span className="text-blue-600">{getUsername(answer.user._id)}</span></span>
                                 <span>Posted at: {new Date(answer.createdAt).toLocaleString()}</span>
                             </div>
                         </div>

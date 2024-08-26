@@ -67,10 +67,7 @@ questionRouter.get('/:id', async (req, res) => {
                 await Question.findByIdAndUpdate(id, { $inc: { views: 1 } });
                 await ViewLog.create({ questionId: id, userId: accountId });
             }
-        } else {
-            // Logic to handle guest users (e.g., increment views only once per session)
-            await Question.findByIdAndUpdate(id, { $inc: { views: 1 } });
-        }
+        } 
 
         res.status(200).json(question);
     } catch (err) {

@@ -8,8 +8,8 @@ const ApiContext = createContext();
 // Create a Provider component
 const ApiProvider = ({ children }) => {
     const [account, setAccount] = useState(null);
-    const [questions, setQuestions] = useState([]);
     const [users, setUsers] = useState([]);
+    const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ const ApiProvider = ({ children }) => {
 
                 const [questionsResponse, usersResponse] = await Promise.all([
                     fetch(`${apiUrl}/questions`),
-                    fetch(`${apiUrl}/users`)
+                    fetch(`${apiUrl}/users`),
                 ]);
 
                 if (!questionsResponse.ok || !usersResponse.ok) {
@@ -186,7 +186,7 @@ const ApiProvider = ({ children }) => {
             const response = await fetch(`${apiUrl}/answers`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({answer: data, question, user: account._id }),
+                body: JSON.stringify({answer: data, question: question._id, user: account._id }),
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
